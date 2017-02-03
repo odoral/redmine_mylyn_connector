@@ -8,9 +8,7 @@ class MylynConnector::ProjectsController < MylynConnector::ApplicationController
   helper MylynConnector::MylynHelper
 
   def all
-    @projects = Project.find(:all,
-      :joins => :enabled_modules,
-      :conditions => [ "enabled_modules.name = 'issue_tracking' AND #{Project.visible_condition(User.current)}"])
+    @projects = Project.joins("INNER JOIN enabled_modules ON enabled_modules.name = 'issue_tracking' AND #{Project.visible_condition(User.current)}")
 
     respond_to do |format|
       format.xml {render :layout => nil}

@@ -56,10 +56,8 @@ class MylynConnector::IssuesController < MylynConnector::ApplicationController
 
     cond = ActiveRecord::Base.connection.quoted_date(time)
 
-    @issues = Issue.find(
-      :all,
-      :joins => ["join #{Project.table_name} on project_id=#{Project.table_name}.id"],
-      :conditions => ["#{Issue.table_name}.id in (?) and #{Issue.table_name}.updated_on >= ? and " << Project.visible_condition(User.current), issues, cond]
+    @issues = Issue.joins("join #{Project.table_name} on project_id=#{Project.table_name}.id")
+	.where("#{Issue.table_name}.id in (?) and #{Issue.table_name}.updated_on >= ? and " << Project.visible_condition(User.current), issues, cond
     )
     respond_to do |format|
       format.xml {render :layout => nil}
@@ -72,11 +70,10 @@ class MylynConnector::IssuesController < MylynConnector::ApplicationController
     issues.uniq!
     issues.compact!
 
-    @issues = Issue.find(
-      :all,
-      :joins => ["join #{Project.table_name} on project_id=#{Project.table_name}.id"],
-      :conditions => ["#{Issue.table_name}.id in (?) and " << Project.visible_condition(User.current), issues]
+    @issues = Issue.joins("join #{Project.table_name} on project_id=#{Project.table_name}.id")
+	.where("#{Issue.table_name}.id in (?) and " << Project.visible_condition(User.current), issues
     )
+
     respond_to do |format|
       format.xml {render :layout => nil}
     end
